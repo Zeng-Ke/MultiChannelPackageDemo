@@ -1,0 +1,92 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 26
+
+    //默认配置，所有productFlavors都会继承defaultConfig中配置的属性
+    defaultConfig {
+
+        //默认的applicationId,一般与AndroidManifest.xml文件package属性相同
+        applicationId "com.zk.multichannel"
+        minSdkVersion 15
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        flavorDimensions "1"
+    }
+
+    //签名
+    signingConfigs {
+        debug {
+            storeFile file("zkSign.jks")
+            storePassword KEYSTORE_PASSWORD
+            keyAlias "zkSign"
+            keyPassword KEYSTORE_PASSWORD
+        }
+
+        release {
+            storeFile file("zkSign.jks")
+            storePassword KEYSTORE_PASSWORD
+            keyAlias "zkSign"
+            keyPassword KEYSTORE_PASSWORD
+        }
+
+        flavors_dev {
+            storeFile file("zkSign.jks")
+            storePassword KEYSTORE_PASSWORD
+            keyAlias "zkSign"
+            keyPassword KEYSTORE_PASSWORD
+        }
+
+
+    }
+
+
+    /**
+     * productFlavor定义了一个应用的自定义构建版本
+     * 一个单一的项目可以同时定义多个不同的flavor来改变应用的输出
+     * productFlavor这个概念是为了解决不同版本之间的差异非常小的情况，通常用于区分同一个应用的不同渠道/客户等，可包含少量的业务功能区别
+     *
+     * productFlovors   中的flavor不能跟buildType在中的一样，否则会报“ProductFlavor names cannot collide with BuildType names“
+     */
+    productFlavors {
+
+        //默认版本，不设置applicationId，继承defaultCOnfig中的配置
+        flavors_default {}
+
+        //开发版本，applicationId替换为multichannel.dev
+        flavors_dev {
+            applicationId "com.zk.multichannel.dev"
+        }
+
+        //发布版本，applicationId替换为multichannel.release
+        flavors_release {
+            applicationId "com.zk.multichannel.release"
+        }
+    }
+
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release //签名，注意buildTypes要放到signingConfigs的后面
+
+            //productFlavors.flavors_dev.signingConfig signingConfigs.flavors_dev // 也可以单独制定渠道的签名
+
+        }
+
+    }
+
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:0.5'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:2.2.2'
+}
